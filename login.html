@@ -1,0 +1,87 @@
+
+
+<!-- Modified HTML to connect with PHP -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TechZone</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Welcome Back</h2>
+                <p>Login to access your account</p>
+            </div>
+            
+            <!-- Show message if there is one -->
+            
+            <div class="message <?php echo $response['success'] ? 'success' : 'error'; ?>">
+                
+            </div>
+            
+            
+            <form class="auth-form" action="login.php" method="POST">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Your Password" required>
+                </div>
+                <div class="form-group" style="text-align: right;">
+                    <a href="forgot-password.php" style="color: var(--accent-color);">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="signnup.html">Sign Up</a></p>
+            </div>
+            <div class="auth-footer" style="margin-top: 20px;">
+                <a href="index.html" style="display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    $(document).ready(function() {
+        // AJAX form submission
+        $(".auth-form").on('submit', function(e) {
+            e.preventDefault();
+            
+            $.ajax({
+                type: "POST",
+                url: "login.php",
+                data: $(this).serialize(),
+                dataType: "json",
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message
+                        $(".auth-card").prepend('<div class="message success">' + response.message + '</div>');
+                        
+                        // Redirect after a short delay
+                        setTimeout(function() {
+                            window.location.href = response.redirect;
+                        }, 1000);
+                    } else {
+                        // Show error message
+                        $(".auth-card").prepend('<div class="message error">' + response.message + '</div>');
+                    }
+                },
+                error: function() {
+                    $(".auth-card").prepend('<div class="message error">An error occurred. Please try again.</div>');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
